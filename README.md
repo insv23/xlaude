@@ -41,14 +41,20 @@ This creates a new git worktree at `../<repo>-<name>` and a corresponding branch
 ### Open an existing workspace
 
 ```bash
-# Open specific workspace
+# Switch to specific workspace
 xlaude open feature-auth
 
 # Interactive selection
 xlaude open
+
+# Open with VS Code
+xlaude open feature-auth --with code
+
+# Open with vim
+xlaude open feature-auth --with vim
 ```
 
-This switches to the worktree directory and launches Claude with `--dangerously-skip-permissions`.
+This switches to the worktree directory. Use `--with` to launch a specific program.
 
 ### Add existing worktree
 
@@ -100,10 +106,12 @@ Use `--force` when:
 1. **Start a new feature**:
    ```bash
    xlaude create auth-system
-   xlaude open auth-system
+   xlaude open auth-system  # Just switch to directory
+   # Or open with your preferred editor:
+   xlaude open auth-system --with code
    ```
 
-2. **Work on the feature** with Claude assistance
+2. **Work on the feature** in your preferred environment
 
 3. **Switch contexts**:
    ```bash

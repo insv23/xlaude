@@ -1,58 +1,50 @@
 use anyhow::{Context, Result};
 use colored::Colorize;
-use dialoguer::Select;
 use std::process::Command;
 
 use crate::state::XlaudeState;
+use crate::utils::{resolve_worktree_name, get_worktree_info};
 
-pub fn handle_open(name: Option<String>) -> Result<()> {
+pub fn handle_open(name: Option<String>, with: Option<String>) -> Result<()> {
     let state = XlaudeState::load()?;
+    let worktree_name = resolve_worktree_name(name, &state)?;
+    let worktree_info = get_worktree_info(&state, &worktree_name)?;
 
-    if state.worktrees.is_empty() {
-        anyhow::bail!("No worktrees found. Create one first with 'xlaude create'");
-    }
-
-    // Determine which worktree to open
-    let worktree_name = if let Some(n) = name {
-        // Verify the worktree exists
-        if !state.worktrees.contains_key(&n) {
-            anyhow::bail!("Worktree '{}' not found", n);
-        }
-        n
-    } else {
-        // Interactive selection
-        let names: Vec<&String> = state.worktrees.keys().collect();
-        let selection = Select::new()
-            .with_prompt("Select a worktree to open")
-            .items(&names)
-            .interact()?;
-        names[selection].clone()
-    };
-
-    let worktree_info = state
-        .worktrees
-        .get(&worktree_name)
-        .context("Worktree not found")?;
-
-    println!(
-        "{} Opening worktree '{}'...",
-        "🚀".green(),
-        worktree_name.cyan()
-    );
-
-    // Change to worktree directory and launch Claude
+    // Change to worktree directory
     std::env::set_current_dir(&worktree_info.path).context("Failed to change directory")?;
 
-    let mut cmd = Command::new("claude");
-    cmd.arg("--dangerously-skip-permissions");
+    match with {
+        Some(program) => open_with_program(&worktree_name, &program),
+        None => {
+            println!(
+                "{} Switched to worktree '{}' at {}",
+                "✓".green(),
+                worktree_name.cyan(),
+                worktree_info.path.display()
+            );
+            println!("{} You can now start working in this directory", "→".blue());
+            Ok(())
+        }
+    }
+}
 
-    // Inherit all environment variables
-    cmd.envs(std::env::vars());
+/// Opens the worktree with a specific program
+fn open_with_program(worktree_name: &str, program: &str) -> Result<()> {
+    println!(
+        "{} Opening worktree '{}' with {}...",
+        "🚀".green(),
+        worktree_name.cyan(),
+        program.cyan()
+    );
 
-    let status = cmd.status().context("Failed to launch Claude")?;
+    let status = Command::new(program)
+        .arg(".")
+        .envs(std::env::vars()) // Inherit all environment variables
+        .status()
+        .context(format!("Failed to launch {}", program))?;
 
     if !status.success() {
-        anyhow::bail!("Claude exited with error");
+        anyhow::bail!("{} exited with error", program);
     }
 
     Ok(())

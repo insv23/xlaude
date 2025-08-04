@@ -5,6 +5,7 @@ use std::path::Path;
 
 use crate::git::{execute_git, has_unpushed_commits, is_working_tree_clean};
 use crate::state::{WorktreeInfo, XlaudeState};
+use crate::utils::{find_current_worktree_name, get_worktree_info};
 
 pub fn handle_delete(name: Option<String>, force: bool) -> Result<()> {
     let mut state = XlaudeState::load()?;
@@ -41,31 +42,7 @@ fn resolve_worktree_name(name: Option<String>, state: &XlaudeState) -> Result<St
     }
 }
 
-fn find_current_worktree_name(state: &XlaudeState) -> Result<String> {
-    let current_dir = std::env::current_dir()?;
-    let current_dir_name = current_dir
-        .file_name()
-        .and_then(|n| n.to_str())
-        .context("Failed to get current directory name")?;
 
-    state
-        .worktrees
-        .values()
-        .find(|worktree| {
-            worktree.path
-                .file_name()
-                .and_then(|n| n.to_str()) == Some(current_dir_name)
-        })
-        .map(|worktree| worktree.name.clone())
-        .context("Current directory is not a managed worktree")
-}
-
-fn get_worktree_info<'a>(state: &'a XlaudeState, worktree_name: &str) -> Result<&'a WorktreeInfo> {
-    state
-        .worktrees
-        .get(worktree_name)
-        .context("Worktree not found")
-}
 
 fn should_check_worktree_status(force: bool, worktree_path: &Path) -> bool {
     !force && worktree_path.exists()

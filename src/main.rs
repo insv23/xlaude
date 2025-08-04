@@ -24,10 +24,13 @@ enum Commands {
         /// Name for the worktree (random BIP39 word if not provided)
         name: Option<String>,
     },
-    /// Open an existing worktree and launch Claude
+    /// Open an existing worktree
     Open {
         /// Name of the worktree to open (interactive selection if not provided)
         name: Option<String>,
+        /// Command to open the worktree with (e.g., "code", "vim", "emacs")
+        #[arg(short, long)]
+        with: Option<String>,
     },
     /// Delete a worktree and clean up
     Delete {
@@ -51,7 +54,7 @@ fn main() -> Result<()> {
 
     match cli.command {
         Commands::Create { name } => handle_create(name),
-        Commands::Open { name } => handle_open(name),
+        Commands::Open { name, with } => handle_open(name, with),
         Commands::Delete { name, force } => handle_delete(name, force),
         Commands::Add { name } => handle_add(name),
         Commands::List => handle_list(),

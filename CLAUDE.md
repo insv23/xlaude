@@ -12,12 +12,13 @@ xlaude 是一个用于管理 Claude 实例的命令行工具，通过 git worktr
 - 创建 worktree 到 `../<repo-name>-<name>` 目录
 - **不会自动启动 Claude**
 
-### xlaude open [name]
-打开已存在的 worktree 并启动 Claude：
+### xlaude open [name] [--with <program>]
+打开已存在的 worktree：
 - 有参数：打开指定的 worktree
 - 无参数：显示交互式选择列表
 - 切换到 worktree 目录
-- 启动 `claude --dangerously-skip-permissions`
+- `--with` 或 `-w`：使用指定程序打开目录（如 `code`、`vim`、`emacs` 等）
+- 不带 `--with`：仅切换到 worktree 目录，不启动任何程序
 - 继承所有环境变量
 
 ### xlaude delete [name] [--force]
@@ -71,9 +72,14 @@ xlaude create feature-x  # 创建 ../opendal-feature-x 目录
 # 使用随机名称创建
 xlaude create  # 可能创建 ../opendal-dolphin 目录
 
-# 打开并启动 Claude
-xlaude open feature-x  # 打开指定的 worktree
+# 打开 worktree
+xlaude open feature-x  # 仅切换到指定的 worktree 目录
 xlaude open  # 交互式选择要打开的 worktree
+
+# 使用特定程序打开
+xlaude open feature-x --with code  # 使用 VS Code 打开
+xlaude open feature-x --with vim   # 使用 vim 打开
+xlaude open --with code           # 交互式选择后用 VS Code 打开
 
 # 将已存在的 worktree 添加到管理
 cd ../opendal-bugfix
@@ -94,7 +100,8 @@ xlaude delete feature-x --force
 
 # 典型工作流
 xlaude create my-feature  # 创建 worktree
-xlaude open my-feature   # 打开并开始工作
+xlaude open my-feature   # 切换到 worktree 目录
+xlaude open my-feature --with code  # 或使用 VS Code 打开
 # ... 工作完成后 ...
 xlaude delete my-feature # 清理 worktree
 ```
