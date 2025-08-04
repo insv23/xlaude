@@ -10,17 +10,22 @@ pub fn handle_open(name: Option<String>, with: Option<String>) -> Result<()> {
     let worktree_name = resolve_worktree_name(name, &state)?;
     let worktree_info = get_worktree_info(&state, &worktree_name)?;
 
+    open_worktree(&worktree_name, &worktree_info.path, with)
+}
+
+/// Opens a worktree at the given path with optional program
+pub fn open_worktree(worktree_name: &str, worktree_path: &std::path::Path, with: Option<String>) -> Result<()> {
     // Change to worktree directory
-    std::env::set_current_dir(&worktree_info.path).context("Failed to change directory")?;
+    std::env::set_current_dir(worktree_path).context("Failed to change directory")?;
 
     match with {
-        Some(program) => open_with_program(&worktree_name, &program),
+        Some(program) => open_with_program(worktree_name, &program),
         None => {
             println!(
                 "{} Switched to worktree '{}' at {}",
                 "✓".green(),
                 worktree_name.cyan(),
-                worktree_info.path.display()
+                worktree_path.display()
             );
             println!("{} You can now start working in this directory", "→".blue());
             Ok(())

@@ -12,6 +12,15 @@ xlaude 是一个用于管理 Claude 实例的命令行工具，通过 git worktr
 - 创建 worktree 到 `../<repo-name>-<name>` 目录
 - **不会自动启动 Claude**
 
+### xlaude new [name] [--with <program>]
+创建并打开新的 worktree（相当于 create + open）：
+- 必须在 main/master/develop 分支上执行
+- 如果不提供 name，自动从 BIP39 词库随机选择一个词
+- 创建新分支和 worktree
+- 自动切换到新创建的 worktree 目录
+- `--with` 或 `-w`：使用指定程序打开目录（如 `code`、`vim`、`emacs` 等）
+- 不带 `--with`：仅切换到 worktree 目录
+
 ### xlaude open [name] [--with <program>]
 打开已存在的 worktree：
 - 有参数：打开指定的 worktree
@@ -98,7 +107,12 @@ xlaude delete feature-x
 # 强制删除（目录已被手动删除的情况）
 xlaude delete feature-x --force
 
-# 典型工作流
+# 创建并立即打开（推荐）
+xlaude new my-feature  # 创建并切换到新 worktree
+xlaude new my-feature --with code  # 创建并用 VS Code 打开
+xlaude new --with code  # 随机名称，用 VS Code 打开
+
+# 传统工作流
 xlaude create my-feature  # 创建 worktree
 xlaude open my-feature   # 切换到 worktree 目录
 xlaude open my-feature --with code  # 或使用 VS Code 打开

@@ -9,6 +9,7 @@ A CLI tool for managing Claude instances with git worktree for parallel developm
 - **Smart cleanup**: Safely delete worktrees with uncommitted change detection
 - **Session tracking**: View Claude conversation history across instances
 - **Random naming**: Generate memorable names using BIP39 word list
+- **Quick start**: Create and open workspaces in one command
 
 ## Installation
 
@@ -26,7 +27,20 @@ cargo build --release
 
 ## Usage
 
-### Create a new workspace
+### Create and open a new workspace (recommended)
+
+```bash
+# Create and switch to new workspace
+xlaude new feature-auth
+
+# Create and open with VS Code
+xlaude new feature-auth --with code
+
+# Create with random name and open with vim
+xlaude new --with vim
+```
+
+### Create a new workspace (without opening)
 
 ```bash
 # Create with custom name
@@ -103,7 +117,12 @@ Use `--force` when:
 
 ## Typical Workflow
 
-1. **Start a new feature**:
+1. **Start a new feature** (quick start):
+   ```bash
+   xlaude new auth-system --with code  # Create and open in one command
+   ```
+
+   Or using separate commands:
    ```bash
    xlaude create auth-system
    xlaude open auth-system  # Just switch to directory

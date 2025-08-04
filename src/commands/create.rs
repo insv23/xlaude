@@ -1,12 +1,32 @@
 use anyhow::{Context, Result};
 use chrono::Utc;
 use colored::Colorize;
+use std::path::PathBuf;
 
 use crate::git::{execute_git, get_repo_name, is_base_branch};
 use crate::state::{WorktreeInfo, XlaudeState};
 use crate::utils::generate_random_name;
 
 pub fn handle_create(name: Option<String>) -> Result<()> {
+    let (worktree_name, worktree_path) = create_worktree(name)?;
+    
+    println!(
+        "{} Worktree created at: {}",
+        "✅".green(),
+        worktree_path.display()
+    );
+    println!(
+        "  {} To open it, run: {} {}",
+        "💡".cyan(),
+        "xlaude open".cyan(),
+        worktree_name.cyan()
+    );
+
+    Ok(())
+}
+
+/// Creates a new worktree and returns the name and path
+pub fn create_worktree(name: Option<String>) -> Result<(String, PathBuf)> {
     // Check if we're in a git repository
     let repo_name = get_repo_name().context("Not in a git repository")?;
 
@@ -57,17 +77,5 @@ pub fn handle_create(name: Option<String>) -> Result<()> {
     );
     state.save()?;
 
-    println!(
-        "{} Worktree created at: {}",
-        "✅".green(),
-        worktree_path.display()
-    );
-    println!(
-        "  {} To open it, run: {} {}",
-        "💡".cyan(),
-        "xlaude open".cyan(),
-        worktree_name.cyan()
-    );
-
-    Ok(())
+    Ok((worktree_name, worktree_path))
 }
