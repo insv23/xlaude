@@ -33,6 +33,9 @@ enum Commands {
     Delete {
         /// Name of the worktree to delete (current if not provided)
         name: Option<String>,
+        /// Force delete even if worktree directory is missing
+        #[arg(short, long)]
+        force: bool,
     },
     /// Add current worktree to xlaude management
     Add {
@@ -49,7 +52,7 @@ fn main() -> Result<()> {
     match cli.command {
         Commands::Create { name } => handle_create(name),
         Commands::Open { name } => handle_open(name),
-        Commands::Delete { name } => handle_delete(name),
+        Commands::Delete { name, force } => handle_delete(name, force),
         Commands::Add { name } => handle_add(name),
         Commands::List => handle_list(),
     }

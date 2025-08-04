@@ -20,13 +20,16 @@ xlaude 是一个用于管理 Claude 实例的命令行工具，通过 git worktr
 - 启动 `claude --dangerously-skip-permissions`
 - 继承所有环境变量
 
-### xlaude delete [name]
+### xlaude delete [name] [--force]
 删除 worktree 并清理：
 - 有参数：删除指定的 worktree
 - 无参数：删除当前所在的 worktree
 - 检查未提交的修改和未推送的 commit
 - 需要时进行二次确认
 - 自动删除 worktree 和本地分支（如果安全）
+- `--force` 或 `-f`：强制删除，跳过目录存在性检查
+  - 适用于手动删除了 worktree 目录的情况
+  - 清理 xlaude 状态和 git worktree 引用
 
 ### xlaude add [name]
 将当前 worktree 添加到 xlaude 管理：
@@ -50,7 +53,10 @@ xlaude 是一个用于管理 Claude 实例的命令行工具，通过 git worktr
 
 - 使用 Rust 开发
 - 直接调用系统 git 命令
-- 状态持久化到 `~/.config/xlaude/state.json`
+- 状态持久化到：
+  - macOS: `~/Library/Application Support/com.xuanwo.xlaude/state.json`
+  - Linux: `~/.config/xlaude/state.json`
+  - Windows: `%APPDATA%\xuanwo\xlaude\config\state.json`
 - 使用 clap 构建 CLI
 - 使用 BIP39 词库生成随机名称
 - 彩色输出和交互式确认
@@ -82,6 +88,9 @@ xlaude delete
 
 # 删除指定 worktree
 xlaude delete feature-x
+
+# 强制删除（目录已被手动删除的情况）
+xlaude delete feature-x --force
 
 # 典型工作流
 xlaude create my-feature  # 创建 worktree

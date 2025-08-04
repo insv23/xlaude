@@ -81,12 +81,19 @@ xlaude delete
 
 # Delete specific workspace
 xlaude delete feature-auth
+
+# Force delete (skip directory existence check)
+xlaude delete feature-auth --force
 ```
 
 Performs safety checks for:
 - Uncommitted changes
 - Unpushed commits
 - Confirms before deletion
+
+Use `--force` when:
+- Worktree directory was manually deleted
+- Need to clean up orphaned entries from xlaude state
 
 ## Typical Workflow
 
