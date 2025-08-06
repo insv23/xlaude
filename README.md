@@ -13,16 +13,13 @@ A CLI tool for managing Claude instances with git worktree for parallel developm
 
 ## Installation
 
-```bash
-cargo install xlaude
-```
-
-Or build from source:
+Clone and build from source:
 
 ```bash
-git clone https://github.com/xuanwo/xlaude
+git clone https://github.com/insv23/xlaude.git
 cd xlaude
 cargo build --release
+cargo install --path .
 ```
 
 ## Usage
